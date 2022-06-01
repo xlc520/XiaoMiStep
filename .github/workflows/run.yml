@@ -1,15 +1,15 @@
 name: 刷步数
 
 on:
-  # 手动触发部署
+  #push:
+  #  branches: [ main ]
+  #pull_request:
+  #  branches: [ main ]
+  # schedule:
+  #   - cron: '9 0,2,5,7,9,11,13 * * *'
+  # watch:
+  #   types: started
   workflow_dispatch:
-  # push:
-  #   branches: [ main ]
-  # pull_request:
-  #   branches: [ main ]
-  schedule:
-    - cron: 40 13 * * *
-
 
 jobs:
   build:
@@ -17,18 +17,32 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout codes
+        uses: actions/checkout@v2
+      - name: Update system and install zsh
+        run: |
+          sudo -E apt-get -qq update
+          sudo -E apt-get install zsh -y
+          
       - name: 初始化Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.8
+          
       - name: 开始
         run: |
-          pip install requests
-          pmode='${{ secrets.PMODE }}'
-          pkey='${{ secrets.PKEY }}'
+          pip3 install requests
           user='${{ secrets.USER }}'
-          pwd='${{ secrets.PWD }}'
-          step='${{ secrets.STEP }}'
-
-          python3 main.py ${pmode} ${pkey} ${user} ${pwd} ${step}
+          passwd='${{ secrets.PWD }}'
+          skey='${{ secrets.SKEY }}'
+          sckey='${{ secrets.SCKEY }}'
+          position='${{ secrets.POSITION }}'
+          corpid='${{ secrets.CORPID }}'
+          corpsecret='${{ secrets.CORPSECRET }}'
+          agentid='${{ secrets.AGENTID }}'
+          touser='${{ secrets.TOUSER }}'
+          toparty='${{ secrets.TOPARTY }}'
+          totag='${{ secrets.TOTAG }}'
+          open_get_weather='${{ secrets.OPEN_GET_WEATHER }}'
+          area='${{ secrets.AREA }}'
+          python3 main.py ${user} ${passwd} ${skey} ${sckey} ${position} ${corpid} ${corpsecret} ${agentid} ${touser} ${toparty} ${totag} ${open_get_weather} ${area}

@@ -1,37 +1,39 @@
-# 原作者： mimotion
-小米运动刷步数 原github Squaregentleman被封 为了不耽误你们正常fork 我开了新号
+# mimotion
+![ 刷步数](https://github.com/xunichanghuan/mimotion/actions/workflows/run.yml/badge.svg)
+![同步到Gitee](https://github.com/xunichanghuan/mimotion/actions/workflows/sync2gitee.yml/badge.svg)
+[![GitHub forks](https://img.shields.io/github/forks/xunichanghuan/mimotion?style=flat-square)](https://github.com/xunichanghuan/mimotion/network)
+[![GitHub stars](https://img.shields.io/github/stars/xunichanghuan/mimotion?style=flat-square)](https://github.com/xunichanghuan/mimotion/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/xunichanghuan/mimotion?style=flat-square)](https://github.com/xunichanghuan/mimotion/issues)
+
 # 小米运动自动刷步数
 
 > 小米运动自动刷步数
-
-2022年2月20日 
-- 已更改为自己UA，目标步数
-- 更改Action运行方式：手动运行、定时运行
 
 ## Github Actions 部署指南
 
 ### 一、Fork 此仓库
 
 ### 二、设置账号密码
-> 添加名为  **PMODE**、**PKEY**、**USER**、**PWD**、**STEP** 的变量: Settings-->Secrets-->New secret  
+> 添加名为  **USER**、**PWD**、**SKEY**、**SCKEY**、**POSITION** 、**CORPID**、**CORPSECRET**、**AGENTID**、**TOUSER**、**TOPARTY**、**TOTAG**、**OPEN_GET_WEATHER**、**AREA**的变量: Settings-->Secrets-->New secret  
 
 | Secrets |  格式  |
 | -------- | ----- |
-| PMODE |   推送模式,server酱推送:`wx` 新server酱推送:`nwx` tg推送:`tg` 企业微信推送:`qwx` PushPlus推送:`pp` 关闭推送:`off`|
-| PKEY |   推送key,详见PKEY参数解释|
-| USER |   账号,仅支持手机号|
-| PWD |   密码|
-| STEP |   步数:0则为1w-2w之间随机,自定义随机范围: `18000-25000`|
+| USER |   小米运动登录账号,仅支持小米运动账号对应的手机号,不支持小米账号|
+| PWD |   小米运动登录密码,仅支持小米运动账号对应的密码|
+| SKEY |   酷推skey，如无填写**NO**|
+| SCKEY |   server酱sckey，如无填写**NO**|
+| POSITION |   是否开启企业微信推送**false**关闭,**true**开启|
+| CORPID |   企业ID， 登陆企业微信，在我的企业-->企业信息里查看,必填，如果没有，填写**NO**|
+| CORPSECRET |   企业微信自建自建应用，每个自建应用里都有单独的secret,必填，如果没有，填写**NO**|
+| AGENTID |   填写你的企业微信自建应用ID，不加引号，是个整型常数,就是AgentId，如果没有，填写**NO**|
+| TOUSER |   指定接收消息的成员，成员ID列表（多个接收者用”&#166;”分隔，最多支持1000个）。特殊情况：指定为”@all”，则向该企业应用的全部成员发送，如果没有，填写**NO**|
+| TOPARTY |   指定接收消息的部门，部门ID列表，多个接收者用”&#166;”分隔，最多支持100个。当touser为”@all”时填写”@all”，如果没有，填写**NO**|
+| TOTAG |   指定接收消息的标签，标签ID列表，多个接收者用”&#166;”分隔，最多支持100个。当touser为”@all”时填写”@all”，如果没有，填写**NO**|
+| OPEN_GET_WEATHER |   开启根据地区天气情况降低步数**False**关闭,**True**开启|
+| AREA |   设置获取天气的地区（上面开启后必填）如：**北京**，当**OPEN_GET_WEATHER**为**False**时填写**NO**|
+| PAT |   此处**PAT**需要申请，值为github token，教程详见：https://www.jianshu.com/p/bb82b3ad1d11 ,需要repo和workflow权限,此项必填，避免git push的权限错误。 |
 
-| PKEY参数解释 |  格式  |
-| -------- | ----- |
-| TG推送 |   `token@userid`|
-| Server酱推送 |   `填写server酱的推送key`|
-| 企业微信推送 |   `推送用户（可@all）-corpid-corpsecret-(agentid 空则为默认1000002)`|
-| PushPlus推送 |   `token`|
-| 关闭推送 |   `off`|
-
-### 三、多账户(用不上请忽略)
+### 三、自定义启动时间多账户(用不上请忽略)
 
 多账户请用 **#** 分割 然后保存到变量 **USER** 和 **PWD**
 
@@ -43,17 +45,17 @@
 
 ### 四、自定义启动时间
 
-编辑 **.github/workflows/run.yml**
+编辑 **main.py**
 
-找到 cron: 0 10 * * *
+找到 time_list项目，此数据为北京时间，默认表示为8点10点13点15点17点19点21点运行,如需修改，请修改time_list列表，如：time_list = [7, 9, 13, 15, 17, 19, 20]就表示为7点9点13点15点17点19点20点运行，Actions触发里面也要同步修改。
+编辑 **random_cron.sh**
+修改其中**if**语句的判断时间为UTC时间，即**北京时间-8**，如北京时间8点为UTC时间0点，需要运行的时间-8就是UTC时间
 
-修改其中的10为你要的时间
 
-需要运行的时间-8就是UTC时间
 
 ## 注意事项
 
-1. 每天运行一次，在下午 6 点
+1. 每天运行七次，整由time_list和random_cron.sh控制，分钟为随机值
 
 2. 多账户的数量和密码请一定要对上 不然无法使用!!!
 
@@ -65,16 +67,12 @@
 
 6. 小米运动不会更新步数，只有关联的会同步！！！！！
 
-7. 请各位在使用时Fork[主分支](https://github.com/577fkj/mimotion/)，防止出现不必要的bug.
+7. 请各位在使用时Fork[主分支](https://github.com/xunichanghuan/mimotion/)，防止出现不必要的bug.
 
 8. TG推送教程 [点我](./TG_PUSH.md)
 
 9. 请注意，账号不是 [小米账号]，而是 [小米运动] 的账号。
 
-## 纪念一下往日的辉煌
-
-[![](https://i.loli.net/2021/11/19/BLi5cpjPSxh7Am2.png)](https://i.loli.net/2021/11/19/BLi5cpjPSxh7Am2.png)
-
 ## 历史Star数
 
-[![Stargazers over time](https://starchart.cc/577fkj/mimotion.svg)](https://starchart.cc/577fkj/mimotion)
+[![Stargazers over time](https://starchart.cc/xunichanghuan/mimotion.svg)](https://starchart.cc/xunichanghuan/mimotion)
