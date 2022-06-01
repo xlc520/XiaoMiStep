@@ -73,6 +73,4 @@
 
 9. 请注意，账号不是 [小米账号]，而是 [小米运动] 的账号。
 
-## 历史Star数
 
-[![Stargazers over time](https://starchart.cc/xunichanghuan/mimotion.svg)](https://starchart.cc/xunichanghuan/mimotion)
